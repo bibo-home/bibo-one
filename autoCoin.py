@@ -34,21 +34,13 @@ verify_basic_training_btn = config.get("verifyBasicTrainingBtn", "")
 verify_unite_quest_btn = config.get("verifyUniteQuestBtn", "")
 verify_enemy_quest_btn = config.get("verifyEnemyQuestBtn", "")
 verify_victory_quest_btn = config.get("verifyVictoryQuestBtn", "")
-
-if book1Quest == 1:
-    tlosAmount = "100"
-    slushAmount = "32"
-    listVerifyBtns = [verify_basic_training_btn, verify_unite_quest_btn, verify_enemy_quest_btn]
-elif book2Quest == 1:
-    tlosAmount = "230"
-    slushAmount = "56"
-    listVerifyBtns = [verify_victory_quest_btn]
-else:
-    tlosAmount = "10"
-    slushAmount = "5"
-    listVerifyBtns = []
+verify_sinking_quest_btn = config.get("verifySinkingQuestBtn", "")
+verify_disrupted_quest_btn = config.get("verifyDisruptedQuestBtn", "")
 
 
+tlosAmount = "1780"
+slushAmount = "446.489"
+listVerifyBtns = [verify_victory_quest_btn, verify_sinking_quest_btn, verify_disrupted_quest_btn]
 
 # Khởi tạo đối tượng WebDriverLibrary
 os_name = platform.system()
@@ -376,7 +368,8 @@ def verify_task(listBtns):
 
 nCount = 1
 
-for i in range(0, 98, 1):
+for iii in range(83):
+    print(">> Loop: ", iii)
     swap_token("TLOS", "SLUSH", tlosAmount, nCount)
     time.sleep(10)
     #driver.driver.switch_to.window(tekika_window)
