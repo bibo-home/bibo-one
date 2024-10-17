@@ -34,19 +34,12 @@ verify_basic_training_btn = config.get("verifyBasicTrainingBtn", "")
 verify_unite_quest_btn = config.get("verifyUniteQuestBtn", "")
 verify_enemy_quest_btn = config.get("verifyEnemyQuestBtn", "")
 verify_victory_quest_btn = config.get("verifyVictoryQuestBtn", "")
+verify_sinking_quest_btn = config.get("verifySinkingQuestBtn", "")
+verify_disrupted_quest_btn = config.get("verifyDisruptedQuestBtn", "")
 
-if book1Quest == 1:
-    tlosAmount = "100"
-    slushAmount = "32"
-    listVerifyBtns = [verify_basic_training_btn, verify_unite_quest_btn, verify_enemy_quest_btn]
-elif book2Quest == 1:
-    tlosAmount = "230"
-    slushAmount = "56"
-    listVerifyBtns = [verify_victory_quest_btn]
-else:
-    tlosAmount = "10"
-    slushAmount = "5"
-    listVerifyBtns = []
+tlosAmount = "1570"
+slushAmount = "399.059"
+listVerifyBtns = [verify_victory_quest_btn, verify_sinking_quest_btn, verify_disrupted_quest_btn]
 
 
 
@@ -379,13 +372,12 @@ def verify_task(listBtns):
 
 nCount = 1
 
-for i in range(0, 98, 1):
+for iii in range(100):
+    print(">> Loop: ", iii)
     swap_token("TLOS", "SLUSH", tlosAmount, nCount)
-    time.sleep(10)
-    #driver.driver.switch_to.window(tekika_window)
-    #verify_task(listVerifyBtns)
+    time.sleep(15)
+    
     nCount = 2
-    #time.sleep(3)
     driver.driver.switch_to.window(task_window)
     swap_token("SLUSH", "TLOS", slushAmount, nCount)
     time.sleep(10)
