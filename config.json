@@ -6,7 +6,7 @@
   "profile_directory" : "Profile 3",
   "chrome_profile_path": "/home/{username}/.config/google-chrome/",
   "target_url": "https://www.tekika.io/",
-  "gmail" : "michael.carrick.9797@gmail.com",
+  "gmail" : "",
   "connectWallet": "//button[@aria-label=\"Connect Wallet\"]",
   "metaMask":"/html/body/div[5]/div/div[1]/div[1]/div/div[2]/ul/li[1]/button",
   "passMetamask":"dobanbiet1A!",

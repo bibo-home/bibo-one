@@ -38,25 +38,8 @@ else:
     driver = WebDriverLibrary(config['path_chrome_driver'], config['chrome_profile_path'])
 time.sleep(timeWait)
 
-# Mở trang web
-print ("open wwebsite")
-driver.open_website(config["target_url"])
 
 
-# connect wallet
-button = connect_wallet_button = driver.wait_for_element(By.XPATH, config["connectWallet"])
-print("Connect Wallet button found:", connect_wallet_button)
-
-button.click()
-print("Connect Wallet button clicked")
-time.sleep(timeWait)
-
-#click on metamask
-button = driver.wait_for_element(By.XPATH, config["metaMask"])
-print("MetaMask button found:", button)
-button.click()
-print("MetaMask button clicked")
-time.sleep(timeWait)
 
 
 # Wait for Metamask pop-up window to appear
@@ -76,6 +59,40 @@ def wait_for_metamask_popup():
             time.sleep(timeWait)
             print(">> Switched to Metamask window")
             break
+
+
+
+
+
+
+
+
+
+# Mở trang web
+print ("open wwebsite")
+driver.open_website(config["target_url"])
+
+for attempt in range(0, 5):
+    try:
+        # connect wallet
+        button = connect_wallet_button = driver.wait_for_element(By.XPATH, config["connectWallet"])
+        print("Connect Wallet button found:", connect_wallet_button)
+
+        button.click()
+        print("Connect Wallet button clicked")
+        time.sleep(timeWait)
+
+        #click on metamask
+        button = driver.wait_for_element(By.XPATH, config["metaMask"])
+        print("MetaMask button found:", button)
+        button.click()
+        print("MetaMask button clicked")
+        time.sleep(timeWait)
+        break
+    except Exception as e:
+        print(f"An error occurred: {e}")
+        print("Retry attempt:", attempt)
+        driver.reload_page()
 
 
 if (driver.get_number_of_windows() > 1):
@@ -109,7 +126,7 @@ if (driver.get_number_of_windows() > 1):
             print("Confirm button clicked")
             time.sleep(timeWait)
         else:
-                print("MetaMask window closed before completing actions")
+            print("MetaMask window closed before completing actions")
         
         
     except Exception as e:
