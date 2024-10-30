@@ -8,9 +8,9 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 
-reconQuest = 1
+reconQuest = 0
 decoyQuest = 0
-eyesQuest = 0
+eyesQuest = 1
 surfaceQuest = 0
 
 # Đường dẫn đến ChromeDriver và profile Chrome
@@ -51,18 +51,18 @@ if reconQuest == 1:
     verifyBtn = "/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[1]/div/div[1]/div[3]/div[2]/div/button[1]"
 # $10 - $19
 elif decoyQuest == 1:
-    stlosAmount = "60"
-    wUskAmount = "49.57"
+    stlosAmount = "40"
+    wUskAmount = "13.7"
     verifyBtn = "/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[1]/div[3]/div[2]/div/button[1]"
 # $20 - $49
 elif eyesQuest == 1:
-    stlosAmount = "100"
-    wUskAmount = "30.99"
+    stlosAmount = "70"
+    wUskAmount = "23.97"
     verifyBtn = "/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[3]/div/div[1]/div[3]/div[2]/div/button[1]"
 # $50 - $99
 elif surfaceQuest == 1:
-    stlosAmount = "230"
-    wUskAmount = "70.8211"
+    stlosAmount = "180"
+    wUskAmount = "61.5962"
     verifyBtn = "/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[4]/div/div[1]/div[3]/div[2]/div/button[1]"
 
 
@@ -338,7 +338,7 @@ def verify_task(btn):
 
 nCount = 1
 
-for iii in range(99):
+for iii in range(89):
     swap_token("STLOS", "wUSK", stlosAmount, nCount)
     time.sleep(20)
     nCount = 2

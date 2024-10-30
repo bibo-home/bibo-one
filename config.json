@@ -17,7 +17,7 @@
   "signinBtn":"/html/body/div[5]/div/div[1]/div[2]/div/div[2]/button[1]",
   "confirmBtn1":"/html/body/div[1]/div/div/div/div/div[3]/button[2]",
   "avatarBtn":"/html/body/div[1]/div[1]/div[1]/div[3]/button",
-  "questBtn":"/html/body/div[1]/div[2]/div/div[1]/button[2]",
+  "questBtn":"/html/body/div[1]/div[2]/div/div[1]/div/button[2]",
   "partnerBtn":"/html/body/div[1]/div[2]/div/div[3]/div[1]/button[4]",
   "kumaBtn":"/html/body/div[1]/div[2]/div[2]/div[2]/div[3]/div[1]/button",
   "startQuestBtn":"/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[1]/div/div[1]/div[3]/div[2]/div/button[2]",
