@@ -9,8 +9,8 @@ from selenium.webdriver.common.keys import Keys
 
 
 reconQuest = 0
-decoyQuest = 0
-eyesQuest = 1
+decoyQuest = 1
+eyesQuest = 0
 surfaceQuest = 0
 
 # Đường dẫn đến ChromeDriver và profile Chrome
