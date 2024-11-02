@@ -8,9 +8,9 @@ from selenium.webdriver.common.keys import Keys
 partner = "sym"
 
 contactQuest = 0
-umbaQuest = 0
+umbaQuest = 1
 veiledQuest = 0
-finalQuest = 1
+finalQuest = 0
 meetQuest = 0
 
 # Đường dẫn đến ChromeDriver và profile Chrome
@@ -42,8 +42,8 @@ if contactQuest == 1:
     stlosAmount = "21"
     listVerifyBtns = "/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[2]/div/div[1]/div[3]/div[2]/div/button[1]"
 elif umbaQuest == 1:
-    tlosAmount = "40"
-    stlosAmount = "32.97"
+    tlosAmount = "48.8"
+    stlosAmount = "40"
     listVerifyBtns = "/html/body/div[1]/div[2]/div[2]/div[2]/div/div[2]/div/div[3]/div/div[4]/div/div[1]/div[3]/div[2]/div/button[1]"
 elif veiledQuest == 1:
     tlosAmount = "180"
@@ -405,7 +405,7 @@ def verify_task(btn):
 
 nCount = 1
 
-for iii in range(32):
+for iii in range(50):
     print(f"Iteration {iii+1}/32")
     swap_token("TLOS", "STLOS", tlosAmount, nCount)
     time.sleep(10)
@@ -416,8 +416,8 @@ for iii in range(32):
     driver.driver.switch_to.window(task_window)
     swap_token("STLOS", "TLOS", stlosAmount, nCount)
     time.sleep(10)
-    driver.driver.switch_to.window(tekika_window)
-    verify_task(listVerifyBtns)
+    # driver.driver.switch_to.window(tekika_window)
+    # verify_task(listVerifyBtns)
     driver.driver.switch_to.window(task_window)
     time.sleep(3)
 
