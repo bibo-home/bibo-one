@@ -1,4 +1,3 @@
-
 import platform
 import time
 import os
@@ -78,8 +77,9 @@ if (driver.get_number_of_windows() > 1):
         windowMetamask = driver.driver.current_window_handle
         time.sleep(timeWait)
         print("Switched to MetaMask window")
-
-        password = driver.wait_for_element(By.ID, config["passwordId"])
+        
+        #time.sleep(100000)
+        password = driver.wait_for_element(By.CSS_SELECTOR, 'input#password[type="password"][data-testid="unlock-password"]')
         password.send_keys(config["passMetamask"])
         print("Password entered")
         time.sleep(timeWait)
