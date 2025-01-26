@@ -134,11 +134,6 @@ class WebDriverLibrary:
         """
         self.driver.close()
 
-    # def click_at_coordinates(self, x, y):
-    #     action = ActionChains(self.driver)
-    #     action.move_by_offset(x, y).click().perform()
-    #     print(f"Clicked at coordinates ({x}, {y})")
-
     def click_at_coordinates(self, x, y):
         # Maximize the browser window
         self.driver.maximize_window()
@@ -201,4 +196,18 @@ class WebDriverLibrary:
     def quit_driver(self):
         self.driver.quit()
 
+    def wait_for_text_to_display_then_click(self, text, timeout=10):
+        """
+        Chờ đợi văn bản xuất hiện và sau đó click vào phần tử chứa văn bản đó.
         
+        :param text: Văn bản cần tìm
+        :param timeout: Thời gian chờ đợi tối đa (mặc định là 10 giây)
+        """
+        wait = WebDriverWait(self.driver, timeout)
+        try:
+            element = wait.until(EC.presence_of_element_located((By.XPATH, f"//button[contains(text(), '{text}')]")))
+            element.click()
+            print(f"Clicked on button with text '{text}'")
+        except Exception as e:
+            print(f"Text '{text}' not found or not clickable:", e)
+

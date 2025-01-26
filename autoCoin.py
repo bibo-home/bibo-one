@@ -6,9 +6,26 @@ from webDriverLib import WebDriverLibrary, ConfigReader
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
+book = 1
+swapped_num = 260
+remaining_swaps = 1000 - swapped_num
 
-book1Quest = 1
-book2Quest = 0
+# Calculate the number of swaps to perform
+# loop_count = ceiling(remaining_swaps/2)
+if remaining_swaps % 2 == 0:
+    loop_count = remaining_swaps//2
+else:
+    loop_count = remaining_swaps//2 + 1
+
+# Store all window handles with their IDs
+tekika_window = ""
+symmetric_window = ""
+metamask_window = ""
+
+# Verify buttons
+book1_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[4]/div/div[4]/div/div/div[2]/div[1]/div[3]/div/div/button"
+book3_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[3]/div/div/button"
+
 
 # Đường dẫn đến ChromeDriver và profile Chrome
 target_url = "https://mail.google.com/mail/u/0/#inbox"  # Thay đổi URL này thành trang web bạn muốn điều hướng đến
@@ -28,18 +45,6 @@ config['chrome_profile_path'] = config['chrome_profile_path'].replace('{username
 
 #time to wait for action
 timeWait = config["timeWait"]
-
-verify_basic_training_btn = config.get("verifyBasicTrainingBtn", "")
-verify_unite_quest_btn = config.get("verifyUniteQuestBtn", "")
-verify_enemy_quest_btn = config.get("verifyEnemyQuestBtn", "")
-verify_victory_quest_btn = config.get("verifyVictoryQuestBtn", "")
-verify_sinking_quest_btn = config.get("verifySinkingQuestBtn", "")
-verify_disrupted_quest_btn = config.get("verifyDisruptedQuestBtn", "")
-
-
-tlosAmount = "1780"
-slushAmount = "446.489"
-listVerifyBtns = [verify_victory_quest_btn, verify_sinking_quest_btn, verify_disrupted_quest_btn]
 
 # Khởi tạo đối tượng WebDriverLibrary
 os_name = platform.system()
@@ -78,7 +83,6 @@ if (driver.get_number_of_windows() > 1):
         time.sleep(timeWait)
         print("Switched to MetaMask window")
         
-        #time.sleep(100000)
         password = driver.wait_for_element(By.CSS_SELECTOR, 'input#password[type="password"][data-testid="unlock-password"]')
         password.send_keys(config["passMetamask"])
         print("Password entered")
@@ -121,8 +125,7 @@ if (driver.get_number_of_windows() > 1):
 else:
     print("MetaMask window not found")
 
-try:
-    print("linh")
+try: 
     button = driver.wait_for_element(By.XPATH, config["signinBtn"],timeout=1)
     button.click()
     print("Signin button clicked")
@@ -161,234 +164,301 @@ except Exception as e:
     print(f"An error occurred: {e}")
     print ("not need sign in")
 
-button = driver.wait_for_element(By.XPATH, config["avatarBtn"])
-button.click()
-print("Avatar button clicked")
-time.sleep(timeWait)
 
-button = driver.wait_for_element(By.XPATH, config["questBtn"])
-button.click()
-print("Quest button clicked")
-time.sleep(timeWait)
-
-button = driver.wait_for_element(By.XPATH, config["partnerBtn"])
-button.click()
-print("Partner button clicked")
-time.sleep(timeWait)
-
-x = 100
-y = 200
-driver.click_at_coordinates(x, y)
+########
+# Handle Metamask pop-up window
 
 
-button = driver.wait_for_element(By.XPATH, config["swapCircleBtn"])
-button.click()
-print("Swapcircle button clicked")
-time.sleep(timeWait)
 
-tekika_window = driver.driver.current_window_handle
+########
+# Handle SYMMETRIC SWAP
 
-button = driver.wait_for_element(By.XPATH, config["startVictoryQuestBtn"])
-button.click()
-print("Start Quest button clicked")
-time.sleep(timeWait)
+def SYM_select_source_token(token_text):
+    # Find and click the specified element
+    src_token_button = driver.wait_for_element(By.XPATH, '//div[@class="token-select-input selected group selectable"]')
+    src_token_text = src_token_button.find_element(By.XPATH, './/div[@class="flex items-center -mb-px text-base font-medium leading-none"]').text
+    
+    if src_token_text != token_text:
+        src_token_button.click()
+        print("> Source button clicked")
+        
+        # Find the input element, type the token text to search, and press enter
+        search_input = driver.wait_for_element(By.XPATH, '//input[@type="text" and @name="tokenSearchInput" and @placeholder="Search by name, symbol or address"]')
+        search_input.send_keys(token_text)
+        search_input.send_keys(Keys.ENTER)
+        print(f"> > {token_text} entered in search input")
+    else:
+        print(f"> > Source token is already {token_text}")
 
-print(driver.get_number_of_windows())
-driver.get_title_of_all_windows()
-driver.switch_to_window(1)
-print("Switched to task window")
-time.sleep(timeWait)
+def SYM_select_target_token(token_text):
+    # Find and click the specified element using the provided XPath
+    target_token_button = driver.wait_for_element(By.XPATH, '/html/body/div/div[2]/div[1]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div/div[3]/div/div[1]/div/div/div')
+    target_token_text = target_token_button.find_element(By.XPATH, './/div[@class="flex items-center -mb-px text-base font-medium leading-none"]').text
+    
+    if target_token_text != token_text:
+        target_token_button.click()
+        print("> Target button clicked")
+        
+        # Find the input element, type the token text to search, and press enter
+        search_input = driver.wait_for_element(By.XPATH, '//input[@type="text" and @name="tokenSearchInput" and @placeholder="Search by name, symbol or address"]')
+        search_input.send_keys(token_text)
+        search_input.send_keys(Keys.ENTER)
+        print(f"> > {token_text} entered in search input")
+    else:
+        print(f"> > Target token is already {token_text}")
 
-# Get the task window handle
-task_window = driver.driver.current_window_handle
- 
-# Wait for Metamask pop-up window to appear
-def wait_for_metamask_popup():
-    all_windows = driver.driver.window_handles
+def SYM_enter_source_amount(amount):
+    # Find the input field and enter the amount
+    amount_input = driver.wait_for_element(By.XPATH, '//input[@type="number" and @name="tokenIn" and @placeholder="0.0"]')
+    amount_input.click()
+    amount_input.send_keys(Keys.CONTROL + "a")
+    amount_input.send_keys(Keys.DELETE)
+    amount_input.send_keys(str(amount))
+    print(f"> Entered source amount: {amount}")
 
-    # Wait until the number of windows increases
-    while len(all_windows) == 2:
-        time.sleep(1)
+def SYM_enter_target_amount(amount):
+    # Find the input field and enter the amount using the provided XPath
+    amount_input = driver.wait_for_element(By.XPATH, '/html/body/div/div[2]/div[1]/div/div/div/div/div[2]/div[1]/div/div[2]/div/div/div[3]/div/div[1]/input')
+    amount_input.click()
+    amount_input.send_keys(Keys.CONTROL + "a")
+    amount_input.send_keys(Keys.DELETE)
+    amount_input.send_keys(str(amount))
+    print(f"> Entered target amount: {amount}")
+
+def SYM_click_preview_button():
+    # Find and click the Preview button using the correct button element
+    preview_button = driver.wait_for_element(By.XPATH, '//button[@class="bal-btn px-4 h-12 text-base  bg-gradient-to-tr from-blue-600 to-pink-600 hover:from-blue-700 hover:to-pink-700 transition-colors text-white border-none block w-full rounded-lg shadow hover:shadow-none cursor-pointer"]')
+    preview_button.click()
+    print("> Preview button clicked")
+
+def SYM_special_case_STLOS_allowance(maxAmount):
+    for _ in range(3):
         all_windows = driver.driver.window_handles
-
-    # Switch to the new window
-    for window in all_windows:
-        if window != task_window and window != tekika_window:
-            print(">> Metamask popup")
-            driver.driver.switch_to.window(window)
-            time.sleep(timeWait)
-            print(">> Switched to Metamask window")
-            break
-
-def metamask_proc(driver, config, task_window, timeWait, coin="TLOS", maxAmount="250", inputBox=""):
-    try:
-        if coin == "TLOS":
-            # time.sleep(10000)
-            element = driver.wait_for_element(By.XPATH, inputBox)
-            element.click()
-            element.send_keys(Keys.CONTROL + "a")
-            element.send_keys(Keys.DELETE)
-            element.send_keys(maxAmount + Keys.ENTER)
-            print (">> 1. Max entered: " + maxAmount)
-            time.sleep(timeWait)
-        else:
-            element = driver.wait_for_element_to_be_clickable(
-                By.XPATH, config["max2Btn"])
-            element.click()
-            print(">> 1. Max out: done")
-            time.sleep(timeWait)
-
-        element = driver.wait_for_element_to_be_clickable(
-            By.XPATH, config["nextBtn2"])
-        element.click()
-        print(">> 2. Next: done")
-        time.sleep(timeWait)
-
-        element = driver.wait_for_element_to_be_clickable(
-            By.XPATH, config["approveBtnSLUSH"])
-        element.click()
-        print(">> 3. Approve: done")
-        time.sleep(timeWait)
-
-        # Ensure to switch back to task window
-        driver.driver.switch_to.window(task_window)
-        time.sleep(timeWait)
-
-        print("> Back to task window")
-        element = driver.wait_for_element_to_be_clickable(
-            By.XPATH, config["swapTokenToTokenBtn"])
-        element.click()
-        print("> Confirm Swap: done")
-        time.sleep(timeWait)
-
-        wait_for_metamask_popup()
-    except Exception as e:
-        print(">> max2Btn not found:", e)
-
-# clic`k dropdown and select option
-def swap_token(coin1, coin2, numberCoin="25", nCount=2):
-    sourceToken = "/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[2]/div/div[1]/button"
-    destToken = "/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[3]/div/div[1]/button"
-    element = driver.wait_for_element(By.XPATH, sourceToken)
-    srcText = element.find_element(By.TAG_NAME, "h3").text
-
-    element = driver.wait_for_element(By.XPATH, destToken)
-    destText = element.find_element(By.TAG_NAME, "h3").text
-    
-    swapBTN = "/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/button"
-    slushToken = "/html/body/div[2]/div/div/div/div/div[2]/div/div[2]/div[2]/button[7]"
-    
-    
-    if (nCount == 1):
-        if (srcText !=  coin1):    
-            driver.click_dropdown_and_select_option_by_XPATH(sourceToken, coin1)
-            time.sleep(timeWait)
-
-        if (destText != coin2):
-            element = driver.wait_for_element(By.XPATH, destToken)
-            element.click()
-            print("Destination token clicked")
-            time.sleep(timeWait)
-            
-            element = driver.wait_for_element(By.XPATH, slushToken)
-            element.click()
-            print("Choose SLUSH token")
-            time.sleep(timeWait)
-        element = driver.wait_for_element(By.XPATH, sourceToken)
-        srcText = element.find_element(By.TAG_NAME, "h3").text
-
-        element = driver.wait_for_element(By.XPATH, destToken)
-        destText = element.find_element(By.TAG_NAME, "h3").text
         
+        if len(all_windows) > 2:
+            for window in all_windows:
+                if window != tekika_window and window != symmetric_window:
+                    driver.driver.switch_to.window(window)
+                    print("> Switched to MetaMask window")
+                    
+                    time.sleep(2)
+                    
+                    # Wait for the max allowance field to appear
+                    for _ in range(10):
+                        try:
+                            # Set STLOS token allowance to 6
+                            allowance_field = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div/div/div[7]/div/div[2]/input')
+                            allowance_field.click()
+                            allowance_field.send_keys(Keys.CONTROL + "a")
+                            allowance_field.send_keys(Keys.DELETE)
+                            allowance_field.send_keys(maxAmount + Keys.ENTER)
+                            print ("> > Max allowance entered: " + maxAmount)
+                            
+                            nxt_btn = driver.wait_for_element_to_be_clickable( 
+                                By.XPATH, '/html/body/div[1]/div/div/div/div[10]/footer/button[2]')
+                            nxt_btn.click()
+                            print("> > Next: clicked")
+                            time.sleep(1)
+
+                            approved_btn = driver.wait_for_element_to_be_clickable(
+                                By.XPATH, '/html/body/div[1]/div/div/div/div[11]/footer/button[2]')
+                            approved_btn.click()
+                            print("> > Approve: clicked")
+                            time.sleep(1)
+
+                            # Ensure to switch back to task window
+                            driver.driver.switch_to.window(symmetric_window)
+                            time.sleep(timeWait)
+
+                            return
+                        except:
+                            time.sleep(2)
+                    raise TimeoutError("> > Max allowance did not appear in MetaMask window")
+        time.sleep(2)
+    raise TimeoutError("> MetaMask window did not appear")
+    
+
+def SYM_click_confirm_swap_button(special = False):
+    
+    if special:
+        print("> Special case: wait for confirm swap button to appear")
+        confirm_swap_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/div[1]/div/div[2]/div/div/div/div/div[1]/div[4]/div/div/button', timeout = 30)
     else:
-        element = driver.wait_for_element(By.XPATH, swapBTN)
-        element.click()
-        print("Swap clicked successfully")
-        
-        element = driver.wait_for_element(By.XPATH, sourceToken)
-        srcText = element.find_element(By.TAG_NAME, "h3").text
-
-        element = driver.wait_for_element(By.XPATH, destToken)
-        destText = element.find_element(By.TAG_NAME, "h3").text
-
-    print("Pair: ", srcText + " " + destText)
-
-    # enter input for token
-    inputElement = "/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[2]/div/div[2]/input"
-    inputBox = "/html/body/div[1]/div/div/div/div[7]/div/div[2]/input"
+        # Find and click the Confirm Swap button using the provided XPath
+        confirm_swap_button = driver.wait_for_element(By.XPATH, '/html/body/div/div[1]/div/div[2]/div/div/div/div/div[1]/div[4]/div/div/button')
     
+    confirm_swap_button.click()
+    print("> Confirm Swap button clicked")
 
-    if (srcText == coin1 and destText == coin2):
-        if(coin1 == "TLOS"):
-            element = driver.wait_for_element(By.XPATH, inputElement)
-            element.send_keys(numberCoin + Keys.ENTER)
-            print ("> Source entered: " + numberCoin)
-            time.sleep(timeWait)
-        else:
-            element = driver.wait_for_element_to_be_clickable(By.XPATH, config["maxBtn"])
-            element.click()
-            print("> Max button clicked")
-            time.sleep(timeWait)
-            
-        #element = driver.wait_for_element_to_be_clickable(By.XPATH, config["previewBtn"])
-                
-    if (coin1 == "TLOS"):
-        element = driver.wait_for_element_to_be_clickable(By.XPATH, config["swapTokenToTokenBtn"])
-        time.sleep(timeWait)
-        element.click()
-        print("> Confirm Swap: done")
-        time.sleep(timeWait)
+def SYM_confirm_metamask():
+    # Wait for the MetaMask window to pop up, rechecking every 2 seconds, up to 3 times
+    for _ in range(3):
+        all_windows = driver.driver.window_handles
         
-        wait_for_metamask_popup()
-        metamask_proc(driver, config, task_window, timeWait, "TLOS", numberCoin, inputBox)
-        
-        element = driver.wait_for_element_to_be_clickable(By.XPATH, config["confirmAgainBtn"])
-        element.click()
-        print(">> Confirm Again button clicked")
-        time.sleep(timeWait)
+        if len(all_windows) > 2:
+            for window in all_windows:
+                if window != tekika_window and window != symmetric_window:
+                    driver.driver.switch_to.window(window)
+                    print("> Switched to MetaMask window")
+                    
+                    time.sleep(2)
+                    
+                    # Wait for the confirm button to appear
+                    for _ in range(10):
+                        try:
+                            confirm_button = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div/div/div/div[3]/button[2]', timeout=2)
+                            confirm_button.click()
+                            print("> > Confirm button clicked")
+                            return
+                        except:
+                            time.sleep(2)
+                    raise TimeoutError("> > Confirm button did not appear in MetaMask window")
+        time.sleep(2)
+    raise TimeoutError("> MetaMask window did not appear")
+
+def SYM_swap_tokens(source, target, amount, fill_to = "source"):
+    # Select the source token
+    SYM_select_source_token(source)
+    
+    # Select the target token
+    SYM_select_target_token(target)
+    
+    # Enter the source amount
+    if fill_to == "target":
+        SYM_enter_target_amount(amount)
     else:
-        element = driver.wait_for_element_to_be_clickable(By.XPATH, config["approveSlushBtn"])
-        element.click()
-        print("Approve SLUSH button clicked")
-
-        wait_for_metamask_popup()
-        metamask_proc(driver, config, task_window, timeWait, "SLUSH")
+        SYM_enter_source_amount(amount)
+    
+    # Special case STLOS - somehow it shows incorrect rate
+    if source == "STLOS":
+        # Refresh the page and re-select the tokens and amounts
+        driver.driver.refresh()
+        SYM_select_source_token(source)
+        SYM_select_target_token(target)
+        SYM_enter_target_amount(amount)
+        time.sleep(2)
         
-        element = driver.wait_for_element_to_be_clickable(By.XPATH, config["confirmAgainBtn"])
-        element.click()
-        print("Confirm Again button clicked")
-        time.sleep(timeWait)
+    time.sleep(1)
+    
+    global symmetric_window
+    symmetric_window = driver.driver.current_window_handle
+    
+    # Click the Preview button
+    SYM_click_preview_button()
+    
+    time.sleep(1)
+    
+    # Click the Confirm Swap button
+    SYM_click_confirm_swap_button()
+    
+    # Special case
+    if source == "STLOS":
+        SYM_special_case_STLOS_allowance("6")
         
-def verify_task(listBtns):
-    for btn in listBtns:
-        button = driver.wait_for_element(By.XPATH, btn)
-        button.click()
-        print("Verify clicked")
-        time.sleep(5)
+        # Then another confirm swap appears to click
+        SYM_click_confirm_swap_button(special = True)
+    
+    # Confirm the MetaMask transaction
+    SYM_confirm_metamask()
+    
+    time.sleep(1)
+    
+    # Switch back to the Symmetric window
+    driver.driver.switch_to.window(symmetric_window)
 
-nCount = 1
 
-for iii in range(83):
-    print(">> Loop: ", iii)
-    swap_token("TLOS", "SLUSH", tlosAmount, nCount)
-    time.sleep(10)
-    #driver.driver.switch_to.window(tekika_window)
-    #verify_task(listVerifyBtns)
-    nCount = 2
-    #time.sleep(3)
-    driver.driver.switch_to.window(task_window)
-    swap_token("SLUSH", "TLOS", slushAmount, nCount)
-    time.sleep(10)
+
+def verify_swap_quest(quest_window, button):
+    # Switch back to the Tekika window
     driver.driver.switch_to.window(tekika_window)
-    verify_task(listVerifyBtns)
-    driver.driver.switch_to.window(task_window)
-    time.sleep(3)
+    
+    # Find and click the button with the specified class and SVG content
+    svg_button = driver.wait_for_element(By.XPATH, button)
+    svg_button.click()
+    print("> Swaps Verified!")
+    
+    driver.driver.switch_to.window(quest_window)
+    print("> Switched back to Quest window")
 
 
-time.sleep(10000)
-# Ví dụ sử dụng hàm wait_for_element để chờ đợi một phần tử xuất hiện
-#element = driver.wait_for_element(By.XPATH, '//*[@id="example-element-id"]')
-# print("Element found:", element)
+def access_to_book(book):
+    # Store initial windows
+    global tekika_window
+    tekika_window = driver.driver.current_window_handle
+    
+    button = driver.wait_for_element(By.CSS_SELECTOR, 'canvas[width="60"][height="60"][style*="border-radius: 100%"]')
+    button.click()
+    print("Avatar button with canvas clicked")
+    
+    # Find and click the "Quests" element
+    quests_button = driver.wait_for_element(By.XPATH, '//p[@class="chakra-text css-22m1hb" and text()="Quests"]')
+    quests_button.click()
+    print("Quests button clicked")
 
-# Đóng trình duyệt sau khi hoàn thành
-# driver.quit_driver()
+    if book == 1:
+        # Find and click the "Book 1" element using full XPath
+        book1_button = driver.wait_for_element(By.XPATH, '//p[text()="The Augmented"]')
+        book1_button.click()
+        print("Book 1: accessed")
+        
+        # Find and click the "Start Quest" button
+        start_quest_button = driver.wait_for_element(By.XPATH, '//p[text()="Start Quest"]')
+        start_quest_button.click()
+        print("Start Quest button clicked")
+        
+        # Switch to the new tab
+        driver.switch_to_window(1)
+        print("Switched to new tab")
+        
+    elif book == 2:
+        # Find and click the "Book 2" element using full XPath
+        book2_button = driver.wait_for_element(By.XPATH, '//p[text()="Do Your Homework"]')
+        book2_button.click()
+        print("Book 2: accessed")
+    elif book == 3:
+        # Find and click the "Book 3" element using full XPath
+        book3_button = driver.wait_for_element(By.XPATH, '//p[text()="Across the planes"]')
+        book3_button.click()
+        print("Book 3: accessed")
+        
+         # Find and click the "Start Quest" button
+        start_quest_button = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[3]/div/div/div')
+        start_quest_button.click()
+        print("Start Quest button clicked")
+        
+        # Switch to the new tab
+        driver.switch_to_window(1)
+        print("Switched to new tab")
+    elif book == 4:
+        # Add code for accessing Book 4
+        pass
+    else:
+        print("Invalid book number")
+
+
+
+########
+# Main flow
+
+access_to_book(book)
+
+if book == 1:
+    for i in range(loop_count):
+        print(f"Swap {i + 1}")
+        SYM_swap_tokens("USDT", "WTLOS", 1, "source")
+        time.sleep(5)
+        SYM_swap_tokens("WTLOS", "USDT", 1, "target")
+        time.sleep(5)
+        verify_swap_quest(symmetric_window, book1_symm_quest_btn)
+        print("")
+elif book == 3:
+    for i in range(loop_count):
+        print(f"Swap {i + 1}")
+        SYM_swap_tokens("WTLOS", "STLOS", 6.5, "source")
+        time.sleep(5)
+        SYM_swap_tokens("STLOS", "WTLOS", 6.5, "target")
+        time.sleep(5)
+        verify_swap_quest(symmetric_window, book3_symm_quest_btn)
+        print("")
+
+time.sleep(100000)

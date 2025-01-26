@@ -27,15 +27,37 @@ https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.120/linux64/
 Giải nén file zip vừa down
 
 Bước 3: Download code
-https://github.com/linhbktb/tekika 
+https://github.com/bibo-home/bibo-one 
 Có thể dùng git clone hoặc download zip
 
 Bước 4: copy file chromedriver(linux) hoặc chromedriver.exe(window) (download ở bước 2) vào cùng thư mục code (download ở bước 3)
 
-Bước 5: cd vào thư mục code và run câu lệnh sau
+Bước 5: Chỉnh các tham số sau trong code cho phù hợp của bạn
 
-python autoCoin.py (win)
+```python
+# config.json
+"profile_path_windows": "C:\\Users\\nguye\\AppData\\Local\\Google\\Chrome\\User Data", # đường dẫn tới Chrome User Data- đối với windows
+"profile_directory" : "Profile 3",      # Check thứ tự profile
+"chrome_profile_path": "/home/{username}/.config/google-chrome/",           # đường dẫn đối với linux
+"passMetamask":"",      # password đăng nhập metamask
+```
+
+```python
+# autoCoin.py
+book = 1             # Đang hỗ trợ cho symmetric quest book 1 và book 3
+swapped_num = 260    # Số lượng swap đã làm
+```
+
+Bước 6: cd vào thư mục code và run câu lệnh sau
+
+'''bash
+# Cho Window
+python autoCoin.py
+'''
 
 hoặc
 
-python3 autoCoin.py (linux)
+'''bash
+# Cho Linux
+python3 autoCoin.py
+'''
