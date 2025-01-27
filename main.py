@@ -6,8 +6,8 @@ from webDriverLib import WebDriverLibrary, ConfigReader
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-book = 3
-swapped_num = 260
+book = 2
+swapped_num = 145
 remaining_swaps = 1000 - swapped_num
 
 # Calculate the number of swaps to perform
@@ -21,6 +21,7 @@ else:
 tekika_window = ""
 symmetric_window = ""
 metamask_window = ""
+swapsicle_window = ""
 
 special = False
 refresh_now = False
@@ -28,7 +29,7 @@ refresh_now = False
 # Verify buttons
 book1_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[4]/div/div[4]/div/div/div[2]/div[1]/div[3]/div/div/button"
 book3_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[3]/div/div/button"
-
+book2_swc_quest_btn  = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[2]/div/div/div[2]/div[1]/div[3]/div/div/button"
 
 # Đường dẫn đến ChromeDriver và profile Chrome
 target_url = "https://mail.google.com/mail/u/0/#inbox"  # Thay đổi URL này thành trang web bạn muốn điều hướng đến
@@ -246,7 +247,7 @@ def SYM_click_confirm_swap_button():
 
     
 
-def SYM_confirm_metamask(maxAmount, task_window):
+def metamask_confirm(maxAmount, task_window):
     global special
     # Wait for the MetaMask window to pop up, rechecking every 2 seconds, up to 3 times
     for _ in range(3):
@@ -363,15 +364,153 @@ def SYM_swap_tokens(source, target, amount, fill_to = "source"):
         print("> Special case: no allowance needed")
     
     # Confirm the MetaMask transaction
-    SYM_confirm_metamask(maxAmount, symmetric_window)
+    metamask_confirm(maxAmount, symmetric_window)
     
     if special:
         # Then another confirm swap appears to click
         SYM_click_confirm_swap_button()
-        SYM_confirm_metamask(maxAmount, symmetric_window)
+        metamask_confirm(maxAmount, symmetric_window)
         
     time.sleep(1)
 
+
+
+
+###########
+# Swapsicle
+
+def SWC_select_source_token(token_text):
+    if token_text == "WTLOS":
+        token_id = '/html/body/div[2]/div/div/div/div/div[2]/div/div[2]/div[2]/button[1]'
+    else:
+        token_id = '/html/body/div[2]/div/div/div/div/div[2]/div/div[2]/div[2]/button[7]'  
+         
+    # Find and click the specified element
+    src_token_button = driver.wait_for_element(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[2]/div/div[1]/button')
+    src_token_text = src_token_button.find_element(By.XPATH, './/h3').text
+    
+    if src_token_text != token_text:
+        src_token_button.click()
+        print("> Source button clicked")
+        
+        # Find the input element, type the token text to search, and press enter
+        selected_token = driver.wait_for_element(By.XPATH, token_id)
+        selected_token.click()
+        print(f"> > {token_text} selected")
+    else:
+        print(f"> > Source token is already {token_text}")
+        
+def SWC_select_target_token(token_text):
+    if token_text == "WTLOS":
+        token_id = '/html/body/div[2]/div/div/div/div/div[2]/div/div[2]/div[2]/button[1]'
+    else:
+        token_id = '/html/body/div[2]/div/div/div/div/div[2]/div/div[2]/div[2]/button[7]' 
+        
+    # Find and click the specified element using the provided XPath
+    target_token_button = driver.wait_for_element(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[3]/div/div[1]/button')
+    target_token_text = target_token_button.find_element(By.XPATH, './/h3').text
+    
+    if target_token_text != token_text:
+        target_token_button.click()
+        print("> Target button clicked")
+        
+        # Find the input element, type the token text to search, and press enter
+        selected_token = driver.wait_for_element(By.XPATH, token_id)
+        selected_token.click()
+        print(f"> > {token_text} selected")
+    else:
+        print(f"> > Target token is already {token_text}")
+
+def SWC_enter_source_amount(amount):
+    # Find the input field and enter the amount
+    amount_input = driver.wait_for_element(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[2]/div/div[2]/input')
+    amount_input.click()
+    amount_input.send_keys(Keys.CONTROL + "a")
+    amount_input.send_keys(Keys.DELETE)
+    amount_input.send_keys(str(amount))
+    print(f"> Entered source amount: {amount}")
+
+def SWC_enter_target_amount(amount):
+    # Find the input field and enter the amount using the provided XPath
+    amount_input = driver.wait_for_element(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[1]/div[3]/div/div[2]/input')
+    amount_input.click()
+    amount_input.send_keys(Keys.CONTROL + "a")
+    amount_input.send_keys(Keys.DELETE)
+    amount_input.send_keys(str(amount))
+    print(f"> Entered target amount: {amount}")
+    
+# def SWC_click_approve_button():
+#     # Find and click the approve button using the correct button element
+#     try:
+#         approve_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[3]/button[1]')
+#         approve_button.click()
+#         print("> Approve button clicked")
+#     except:
+#         print("> Approve button not found! Let's try swapping directly")
+#         swap_now_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/button')
+#         swap_now_button.click()
+#         print("> SWAP button clicked")
+#         maxAmount = '10'
+#         metamask_confirm(maxAmount, swapsicle_window)
+#         time.sleep(1)
+    
+def SWC_click_swap_button():
+    # Find and click the Preview button using the correct button element
+    swap_now_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/button', timeout=30)
+    swap_now_button.click()
+    print("> SWAP button clicked")
+
+def SWC_swap_tokens(source, target, amount, fill_to = "source"):
+    # Select the source token
+    SWC_select_source_token(source)
+    
+    # Select the target token
+    SWC_select_target_token(target)
+    
+    time.sleep(1)
+    
+    # Enter the source amount
+    if fill_to == "target":
+        SWC_enter_target_amount(amount)
+    else:
+        SWC_enter_source_amount(amount)
+        
+    time.sleep(1)
+    
+    global swapsicle_window
+    swapsicle_window = driver.driver.current_window_handle
+    
+    
+    try:
+        print("> Try to approve the transaction")
+        approve_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[3]/button[1]', timeout=5)
+        approve_button.click()
+        print("> Approve button clicked")
+        time.sleep(1)
+        
+        # Max allowance for tokens
+        maxAmount = '10'
+        if source == "WTLOS":
+            maxAmount = '10'
+        elif source == "SLUSH":
+            maxAmount = '2.1'
+        else:
+            print("> Special case: no allowance needed")
+        
+        # Confirm the MetaMask transaction
+        metamask_confirm(maxAmount, swapsicle_window)
+        SWC_click_swap_button()
+        metamask_confirm(maxAmount, swapsicle_window)
+        time.sleep(1)
+    except:
+        print("> Approve button not found! Let's try swapping directly")
+        SWC_click_swap_button()
+        maxAmount = '10'
+        metamask_confirm(maxAmount, swapsicle_window)
+        time.sleep(1)
+    
+    
+    
 
 def verify_swap_quest(quest_window, button):
     # Switch back to the Tekika window
@@ -420,6 +559,15 @@ def access_to_book(book):
         book2_button = driver.wait_for_element(By.XPATH, '//p[text()="Do Your Homework"]')
         book2_button.click()
         print("Book 2: accessed")
+        
+         # Find and click the "Start Quest" button
+        start_quest_button = driver.wait_for_element(By.XPATH, '//p[text()="Start Quest"]')
+        start_quest_button.click()
+        print("Start Quest button clicked")
+        
+        # Switch to the new tab
+        driver.switch_to_window(1)
+        print("Switched to new tab")
     elif book == 3:
         # Find and click the "Book 3" element using full XPath
         book3_button = driver.wait_for_element(By.XPATH, '//p[text()="Across the planes"]')
@@ -465,5 +613,13 @@ elif book == 3:
         time.sleep(5)
         verify_swap_quest(symmetric_window, book3_symm_quest_btn)
         print("")
-
+elif book == 2:
+    for i in range(loop_count):
+        print(f"Swap {i + 1}")
+        SWC_swap_tokens("WTLOS", "SLUSH", 2.1, "target")
+        time.sleep(5)
+        SWC_swap_tokens("SLUSH", "WTLOS", 2.1, "source")
+        time.sleep(5)
+        verify_swap_quest(swapsicle_window, book2_swc_quest_btn)
+        print("")
 time.sleep(100000)
