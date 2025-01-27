@@ -43,7 +43,7 @@ Có thể dùng git clone hoặc download zip
 ```
 
 ```python
-# autoCoin.py
+# main.py
 book = 1             # Đang hỗ trợ cho symmetric quest book 1 và book 3
 swapped_num = 260    # Số lượng swap đã làm
 ```
@@ -53,11 +53,11 @@ swapped_num = 260    # Số lượng swap đã làm
 #### Cho window
 
 ```bash
-python autoCoin.py
+python main.py
 ```
 
 #### Cho Linux
 
 ```bash
-python3 autoCoin.py
+python3 main.py
 ```
