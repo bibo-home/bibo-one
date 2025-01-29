@@ -6,16 +6,10 @@ from webDriverLib import WebDriverLibrary, ConfigReader
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-book = 2
-swapped_num = 145
-remaining_swaps = 1000 - swapped_num
+book = 3
 
-# Calculate the number of swaps to perform
-# loop_count = ceiling(remaining_swaps/2)
-if remaining_swaps % 2 == 0:
-    loop_count = remaining_swaps//2
-else:
-    loop_count = remaining_swaps//2 + 1
+
+loop_count = 0
 
 # Store all window handles with their IDs
 tekika_window = ""
@@ -76,7 +70,14 @@ button = driver.wait_for_element(By.XPATH, config["metaMask"])
 print("MetaMask button found:", button)
 button.click()
 print("MetaMask button clicked")
-time.sleep(timeWait)
+time.sleep(60)
+
+def enter_password(xpath, password):
+    element = driver.wait_for_element(By.XPATH, xpath)
+    element.send_keys(password)
+    element.send_keys(Keys.ENTER)
+    print("Password entered")
+
 
 if (driver.get_number_of_windows() > 1):
     current_window_handle = driver.driver.current_window_handle
@@ -87,9 +88,9 @@ if (driver.get_number_of_windows() > 1):
         time.sleep(timeWait)
         print("Switched to MetaMask window")
         
-        password = driver.wait_for_element(By.CSS_SELECTOR, 'input#password[type="password"][data-testid="unlock-password"]')
-        password.send_keys(config["passMetamask"])
-        print("Password entered")
+        # Example usage:
+        password_xpath = '//input[@aria-invalid="false" and @autocomplete="current-password" and @id="password" and @type="password" and @dir="auto" and @data-testid="unlock-password" and contains(@class, "MuiInputBase-input") and contains(@class, "MuiInput-input")]'
+        enter_password(password_xpath, config["passMetamask"])
         time.sleep(timeWait)
 
         
@@ -439,21 +440,6 @@ def SWC_enter_target_amount(amount):
     amount_input.send_keys(str(amount))
     print(f"> Entered target amount: {amount}")
     
-# def SWC_click_approve_button():
-#     # Find and click the approve button using the correct button element
-#     try:
-#         approve_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/div[3]/button[1]')
-#         approve_button.click()
-#         print("> Approve button clicked")
-#     except:
-#         print("> Approve button not found! Let's try swapping directly")
-#         swap_now_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/button')
-#         swap_now_button.click()
-#         print("> SWAP button clicked")
-#         maxAmount = '10'
-#         metamask_confirm(maxAmount, swapsicle_window)
-#         time.sleep(1)
-    
 def SWC_click_swap_button():
     # Find and click the Preview button using the correct button element
     swap_now_button = driver.wait_for_element_to_be_clickable(By.XPATH, '/html/body/div/main/div/main/div[3]/div/div/div[2]/button', timeout=30)
@@ -524,6 +510,12 @@ def verify_swap_quest(quest_window, button):
     driver.driver.switch_to.window(quest_window)
     print("> Switched back to Quest window")
 
+def update_swap_count():
+    global swapped_num
+    swapped_num = swapped_num + 2
+    print(f"Swapped {swapped_num} times")
+    report_field = driver.wait_for_element(By.CSS_SELECTOR, 'canvas[width="60"][height="60"][style*="border-radius: 100%"]')
+    
 
 def access_to_book(book):
     # Store initial windows
@@ -539,11 +531,26 @@ def access_to_book(book):
     quests_button.click()
     print("Quests button clicked")
 
+    global loop_count
+
     if book == 1:
         # Find and click the "Book 1" element using full XPath
         book1_button = driver.wait_for_element(By.XPATH, '//p[text()="The Augmented"]')
         book1_button.click()
         print("Book 1: accessed")
+        
+        # Update swapped number
+        report_field = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[4]/div/div[4]/div/div/div[2]/div[1]/div[2]/div/p')
+        swapped_number = int(report_field.text.strip())
+        print(f"Swapped number extracted: {swapped_number}")
+        remaining_swaps = 1000 - swapped_number
+        
+        # Calculate the number of swaps to perform
+        # loop_count = ceiling(remaining_swaps/2)
+        if remaining_swaps % 2 == 0:
+            loop_count = remaining_swaps//2
+        else:
+            loop_count = remaining_swaps//2 + 1
         
         # Find and click the "Start Quest" button
         start_quest_button = driver.wait_for_element(By.XPATH, '//p[text()="Start Quest"]')
@@ -560,6 +567,19 @@ def access_to_book(book):
         book2_button.click()
         print("Book 2: accessed")
         
+        # Update swapped number
+        report_field = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[2]/div/div/div[2]/div[1]/div[2]/div/p')
+        swapped_number = int(report_field.text.strip())
+        print(f"Swapped number extracted: {swapped_number}")
+        remaining_swaps = 1000 - swapped_number
+        
+        # Calculate the number of swaps to perform
+        # loop_count = ceiling(remaining_swaps/2)
+        if remaining_swaps % 2 == 0:
+            loop_count = remaining_swaps//2
+        else:
+            loop_count = remaining_swaps//2 + 1
+        
          # Find and click the "Start Quest" button
         start_quest_button = driver.wait_for_element(By.XPATH, '//p[text()="Start Quest"]')
         start_quest_button.click()
@@ -574,6 +594,19 @@ def access_to_book(book):
         book3_button.click()
         print("Book 3: accessed")
         
+        # Update swapped number
+        report_field = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[2]/div/p')
+        swapped_number = int(report_field.text.strip())
+        print(f"Swapped number extracted: {swapped_number}")
+        remaining_swaps = 1000 - swapped_number
+
+        # Calculate the number of swaps to perform
+        # loop_count = ceiling(remaining_swaps/2)
+        if remaining_swaps % 2 == 0:
+            loop_count = remaining_swaps//2
+        else:
+            loop_count = remaining_swaps//2 + 1
+    
          # Find and click the "Start Quest" button
         start_quest_button = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[3]/div/div/div')
         start_quest_button.click()
@@ -616,10 +649,11 @@ elif book == 3:
 elif book == 2:
     for i in range(loop_count):
         print(f"Swap {i + 1}")
-        SWC_swap_tokens("WTLOS", "SLUSH", 2.1, "target")
+        SWC_swap_tokens("WTLOS", "SLUSH", 2.0, "target")
         time.sleep(5)
-        SWC_swap_tokens("SLUSH", "WTLOS", 2.1, "source")
+        SWC_swap_tokens("SLUSH", "WTLOS", 2.0, "source")
         time.sleep(5)
         verify_swap_quest(swapsicle_window, book2_swc_quest_btn)
         print("")
 time.sleep(100000)
+

@@ -12,16 +12,16 @@ pip install webdriver_manager
 check phiên bản chrome hiện tại:
 vào chrome gõ : chrome://version/ => DÒNG ĐẦU TIÊN CHO THẤY PHIÊN BẢN CHROME HIỆN TẠI
 
-Giả sử là : 127.0.6533.120
+Giả sử là : 132.0.6834.111
 
 Thì thay phiên bản vào đường dẫn sau:
 
 - Đối với window:
 
-https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.120/win64/chromedriver-win64.zip
+https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.111/win64/chromedriver-win64.zip
 
 - đối với Linux:
-https://storage.googleapis.com/chrome-for-testing-public/127.0.6533.120/linux64/chromedriver-linux64.zip
+https://storage.googleapis.com/chrome-for-testing-public/132.0.6834.111/linux64/chromedriver-linux64.zip
 
 
 Giải nén file zip vừa down
@@ -45,7 +45,6 @@ Có thể dùng git clone hoặc download zip
 ```python
 # main.py
 book = 1             # Đang hỗ trợ cho symmetric quest book 1 và book 3
-swapped_num = 260    # Số lượng swap đã làm
 ```
 
 ## Bước 6: cd vào thư mục code và run câu lệnh sau
@@ -61,3 +60,9 @@ python main.py
 ```bash
 python3 main.py
 ```
+
+### Statistic
+
+Quest book 1 - Symmetric swap USDT/WTLOS: 1000 lan = 80 TLOS
+Quest book 2 - Swapsicle swap WTLOS/SLUS: 1000 lan = 120 TLOS
+Quest book 2 - Symmetric swap STLOS/TLOS: 1000 lan = 80 TLOS
