@@ -7,7 +7,7 @@ from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
 book = 3
-
+WTLOS_amount = "11"   # book 3 - manual input to match $1
 
 loop_count = 0
 
@@ -16,6 +16,8 @@ tekika_window = ""
 symmetric_window = ""
 metamask_window = ""
 swapsicle_window = ""
+
+
 
 special = False
 refresh_now = False
@@ -70,7 +72,7 @@ button = driver.wait_for_element(By.XPATH, config["metaMask"])
 print("MetaMask button found:", button)
 button.click()
 print("MetaMask button clicked")
-time.sleep(60)
+time.sleep(5)
 
 def enter_password(xpath, password):
     element = driver.wait_for_element(By.XPATH, xpath)
@@ -355,10 +357,10 @@ def SYM_swap_tokens(source, target, amount, fill_to = "source"):
     
     
     # Max allowance for tokens
-    maxAmount = '1'
+    maxAmount = WTLOS_amount
     
     if source == "STLOS":
-        maxAmount = '8'
+        maxAmount = WTLOS_amount
     elif source == "USDT":
         maxAmount = '1'
     else:
@@ -477,7 +479,7 @@ def SWC_swap_tokens(source, target, amount, fill_to = "source"):
         # Max allowance for tokens
         maxAmount = '10'
         if source == "WTLOS":
-            maxAmount = '10'
+            maxAmount = WTLOS_amount
         elif source == "SLUSH":
             maxAmount = '2.1'
         else:
@@ -640,9 +642,9 @@ if book == 1:
 elif book == 3:
     for i in range(loop_count):
         print(f"Swap {i + 1}")
-        SYM_swap_tokens("WTLOS", "STLOS", 8, "source")
+        SYM_swap_tokens("WTLOS", "STLOS", WTLOS_amount, "source")
         time.sleep(5)
-        SYM_swap_tokens("STLOS", "WTLOS", 8, "target")
+        SYM_swap_tokens("STLOS", "WTLOS", WTLOS_amount, "target")
         time.sleep(5)
         verify_swap_quest(symmetric_window, book3_symm_quest_btn)
         print("")
