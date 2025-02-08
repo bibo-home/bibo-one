@@ -10,8 +10,9 @@ book = 5
 WTLOS_amount = "11"   # book 3 - manual input to match $1
 TLOS_max = "90"
 STLOS_max = "80"   # book 5 - manual input to match $10
-WTLOS_max = "90"   # book 5 - manual input to match $10
+WTLOS_max = "50"   # book 5 - manual input to match $10
 USDT_max = "10"   # book 5 - manual input to match $10
+SLUSH_max = "12"  # book 7 - manual input to match $5
 loop_count = 0
 
 # Store all window handles with their IDs
@@ -30,6 +31,7 @@ book1_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/di
 book3_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[3]/div/div/button"
 book2_swc_quest_btn  = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[2]/div/div/div[2]/div[1]/div[3]/div/div/button"
 book5_symm_quest_btn = '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[7]/div/div/div[2]/div[1]/div[3]/div/div/button'
+book7_swc_quest_btn  = '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div[1]/div[3]/div/div/button'
 
 # Đường dẫn đến ChromeDriver và profile Chrome
 target_url = "https://mail.google.com/mail/u/0/#inbox"  # Thay đổi URL này thành trang web bạn muốn điều hướng đến
@@ -487,9 +489,9 @@ def SWC_swap_tokens(source, target, amount, fill_to = "source"):
         # Max allowance for tokens
         maxAmount = '10'
         if source == "WTLOS":
-            maxAmount = WTLOS_amount
+            maxAmount = WTLOS_max
         elif source == "SLUSH":
-            maxAmount = '2.1'
+            maxAmount = SLUSH_max
         else:
             print("> Special case: no allowance needed")
         
@@ -656,6 +658,33 @@ def access_to_book(book):
         # Switch to the new tab
         driver.switch_to_window(1)
         print("Switched to new tab") 
+    elif book == 7:
+        # Find and click the "Book 7" element using full XPath
+        book_button = driver.wait_for_element(By.XPATH, '//p[text()="Plane shifting"]')
+        book_button.click()
+        print("Book 7: accessed")
+        
+        # Update swapped number
+        report_field = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div[1]/div[2]/div/p')
+        swapped_number = int(report_field.text.strip())
+        print(f"Swapped number extracted: {swapped_number}")
+        remaining_swaps = 1000 - swapped_number
+
+        # Calculate the number of swaps to perform
+        # loop_count = ceiling(remaining_swaps/2)
+        if remaining_swaps % 2 == 0:
+            loop_count = remaining_swaps//2
+        else:
+            loop_count = remaining_swaps//2 + 1
+        
+        
+        start_quest_button = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[4]/div/div/div[2]/div[1]/div[3]/div/div/div')
+        start_quest_button.click()
+        print("Start Quest button clicked")
+        
+        # Switch to the new tab
+        driver.switch_to_window(1)
+        print("Switched to new tab") 
     else:
         print("Invalid book number")
 
@@ -701,6 +730,15 @@ elif book == 5:
         SYM_swap_tokens("USDT", "TLOS", 10, "source")
         time.sleep(5)
         verify_swap_quest(symmetric_window, book5_symm_quest_btn)
+        print("")
+elif book == 7:
+    for i in range(loop_count):
+        print(f"Swap {i + 1} / {loop_count}")
+        SWC_swap_tokens("WTLOS", "SLUSH", 12, "target")
+        time.sleep(5)
+        SWC_swap_tokens("SLUSH", "WTLOS", 12, "source")
+        time.sleep(5)
+        verify_swap_quest(swapsicle_window, book7_swc_quest_btn)
         print("")
 time.sleep(100000)
 
