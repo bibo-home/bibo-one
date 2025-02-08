@@ -6,9 +6,12 @@ from webDriverLib import WebDriverLibrary, ConfigReader
 from selenium.webdriver.common.by import By
 from selenium.webdriver.common.keys import Keys
 
-book = 3
+book = 5
 WTLOS_amount = "11"   # book 3 - manual input to match $1
-
+TLOS_max = "90"
+STLOS_max = "80"   # book 5 - manual input to match $10
+WTLOS_max = "90"   # book 5 - manual input to match $10
+USDT_max = "10"   # book 5 - manual input to match $10
 loop_count = 0
 
 # Store all window handles with their IDs
@@ -26,6 +29,7 @@ refresh_now = False
 book1_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[4]/div/div[4]/div/div/div[2]/div[1]/div[3]/div/div/button"
 book3_symm_quest_btn = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[1]/div/div/div[2]/div[1]/div[3]/div/div/button"
 book2_swc_quest_btn  = "/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[2]/div/div/div[2]/div[1]/div[3]/div/div/button"
+book5_symm_quest_btn = '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[7]/div/div/div[2]/div[1]/div[3]/div/div/button'
 
 # Đường dẫn đến ChromeDriver và profile Chrome
 target_url = "https://mail.google.com/mail/u/0/#inbox"  # Thay đổi URL này thành trang web bạn muốn điều hướng đến
@@ -360,9 +364,13 @@ def SYM_swap_tokens(source, target, amount, fill_to = "source"):
     maxAmount = WTLOS_amount
     
     if source == "STLOS":
-        maxAmount = WTLOS_amount
+        maxAmount = STLOS_max
     elif source == "USDT":
-        maxAmount = '1'
+        maxAmount = USDT_max
+    elif source == "WTLOS":
+        maxAmount = WTLOS_max
+    elif source == "TLOS":
+        maxAmount = TLOS_max
     else:
         print("> Special case: no allowance needed")
     
@@ -620,6 +628,34 @@ def access_to_book(book):
     elif book == 4:
         # Add code for accessing Book 4
         pass
+
+    elif book == 5:
+        # Find and click the "Book 3" element using full XPath
+        book_button = driver.wait_for_element(By.XPATH, '//p[text()="The Belly Of The Beast"]')
+        book_button.click()
+        print("Book 5: accessed")
+        
+        # Update swapped number
+        report_field = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[7]/div/div/div[2]/div[1]/div[2]/div/p')
+        swapped_number = int(report_field.text.strip())
+        print(f"Swapped number extracted: {swapped_number}")
+        remaining_swaps = 1000 - swapped_number
+
+        # Calculate the number of swaps to perform
+        # loop_count = ceiling(remaining_swaps/2)
+        if remaining_swaps % 2 == 0:
+            loop_count = remaining_swaps//2
+        else:
+            loop_count = remaining_swaps//2 + 1
+        
+        
+        start_quest_button = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div[2]/div/div[3]/div[2]/div/div[3]/div/div[7]/div/div/div[2]/div[1]/div[3]/div/div/div')
+        start_quest_button.click()
+        print("Start Quest button clicked")
+        
+        # Switch to the new tab
+        driver.switch_to_window(1)
+        print("Switched to new tab") 
     else:
         print("Invalid book number")
 
@@ -632,7 +668,7 @@ access_to_book(book)
 
 if book == 1:
     for i in range(loop_count):
-        print(f"Swap {i + 1}")
+        print(f"Swap {i + 1} / {loop_count}")
         SYM_swap_tokens("USDT", "WTLOS", 1, "source")
         time.sleep(5)
         SYM_swap_tokens("WTLOS", "USDT", 1, "target")
@@ -641,7 +677,7 @@ if book == 1:
         print("")
 elif book == 3:
     for i in range(loop_count):
-        print(f"Swap {i + 1}")
+        print(f"Swap {i + 1} / {loop_count}")
         SYM_swap_tokens("WTLOS", "STLOS", WTLOS_amount, "source")
         time.sleep(5)
         SYM_swap_tokens("STLOS", "WTLOS", WTLOS_amount, "target")
@@ -650,12 +686,21 @@ elif book == 3:
         print("")
 elif book == 2:
     for i in range(loop_count):
-        print(f"Swap {i + 1}")
+        print(f"Swap {i + 1} / {loop_count}")
         SWC_swap_tokens("WTLOS", "SLUSH", 2.0, "target")
         time.sleep(5)
         SWC_swap_tokens("SLUSH", "WTLOS", 2.0, "source")
         time.sleep(5)
         verify_swap_quest(swapsicle_window, book2_swc_quest_btn)
+        print("")
+elif book == 5:
+    for i in range(loop_count):
+        print(f"Swap {i + 1} / {loop_count}")
+        SYM_swap_tokens("TLOS", "USDT", 10, "target")
+        time.sleep(5)
+        SYM_swap_tokens("USDT", "TLOS", 10, "source")
+        time.sleep(5)
+        verify_swap_quest(symmetric_window, book5_symm_quest_btn)
         print("")
 time.sleep(100000)
 
