@@ -660,7 +660,7 @@ def access_to_book(book):
         print("Switched to new tab") 
     elif book == 7:
         # Find and click the "Book 7" element using full XPath
-        book_button = driver.wait_for_element(By.XPATH, '//p[text()="Plane shifting"]')
+        book_button = driver.wait_for_element(By.XPATH, '/html/body/div[1]/div/div[2]/div/div[1]/div/div/div[7]/span/span/span[1]/div/div/div[2]/div')
         book_button.click()
         print("Book 7: accessed")
         
